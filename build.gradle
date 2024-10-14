@@ -1,0 +1,50 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '2024.7'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation ('org.springframework.boot:spring-boot-starter')
+	implementation ('org.springframework.boot:spring-boot-starter-validation')
+	implementation ('com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.2')
+	implementation ("com.hivemq:hivemq-community-edition-embedded:${project.version}")
+
+	// Needed for backwards compatibility hivemq config file reading ...
+	implementation ('jakarta.xml.bind:jakarta.xml.bind-api:2.3.3')
+	implementation ('com.sun.xml.bind:jaxb-impl:2.3.3')
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named("bootJar") {
+	manifest {
+		attributes 'HiveMQ-Version': "${project.version}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

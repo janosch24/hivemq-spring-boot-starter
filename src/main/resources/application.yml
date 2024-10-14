@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: springboot-hivemq-ce-embedded
+
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: production
+#
+logging:
+  config: classpath:logback-spring.xml
+  name: application
+  path: log
+  file:
+    name: log/application.log
+#---
+
+hivemq-ce-embedded:
+  config-folder: .hivemq/conf
+  data-folder: .hivemq/data
+  log-folder: .hivemq/log
+  extensions-folder: .hivemq/extensions
+
+  hivemq:
+    listeners:
+      tcp-listeners:
+        - name: defaultTcpListener
+          port: 1883
+          bind-address: 0.0.0.0
+
+      websocket-listeners:
+        - name: defaultWebsocketListener
+          port: 8000
+          path: /mqtt
+          bind-address: localhost
+          subprotocols:
+            - mqttv3.1
+            - mqtt
+          allow-extensions: true
+
+    mqtt:
+      session-expiry.max-interval: 60
+      message-expiry.max-interval: 3600
+      packets.max-packet-size: 268435460
+      receive-maximum.server-receive-maximum: 10
+      keep-alive.max-keep-alive: 65535
+      keep-alive.allow-unlimited: false
+      topic-alias.enabled: true
+      topic-alias.max-per-client: 5
+      subscription-identifier.enabled: true
+      wildcard-subscriptions.enabled: true
+      shared-subscriptions.enabled: true
+      retained-messages.enabled: true
+      quality-of-service.max-qos: 2
+      queued-messages.max-queue-size: 1000
+      queued-messages.strategy: discard-oldest
+
+    security:
+      allow-empty-client-id.enabled: false
+      payload-format-validation.enabled: false
+      utf8-validation.enabled: true
+      allow-request-problem-information.enabled: true
+
+    persistence:
+      mode: in-memory
