@@ -39,7 +39,7 @@ public class SpringBootHiveMQEmbeddedLauncher {
 						.build();
 	}
 
-	@SneakyThrows({IOException.class, JsonProcessingException.class})
+	@SneakyThrows({ IOException.class })
 	private void prepareEnvironment(HiveMQEmbeddedConfiguration configuration) {
 
 		if (!Files.isDirectory(Path.of(configuration.getConfigFolder()).toAbsolutePath())) {
