@@ -2,27 +2,20 @@ spring:
   application:
     name: springboot-hivemq-ce-embedded
 
-#---
-#spring:
-#  config:
-#    activate:
-#      on-profile: production
-#
 logging:
   config: classpath:logback-spring.xml
   name: application
   path: log
   file:
     name: log/application.log
-#---
 
-hivemq-ce-embedded:
+hivemq:
   config-folder: .hivemq/conf
   data-folder: .hivemq/data
   log-folder: .hivemq/log
   extensions-folder: .hivemq/extensions
 
-  hivemq:
+  config:
     listeners:
       tcp-listeners:
         - name: defaultTcpListener
@@ -34,10 +27,10 @@ hivemq-ce-embedded:
           port: 8000
           path: /mqtt
           bind-address: localhost
+          allow-extensions: true
           subprotocols:
             - mqttv3.1
             - mqtt
-          allow-extensions: true
 
     mqtt:
       session-expiry.max-interval: 60

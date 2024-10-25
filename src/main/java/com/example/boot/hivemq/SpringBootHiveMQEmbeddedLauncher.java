@@ -1,6 +1,5 @@
 package com.example.boot.hivemq;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
@@ -67,7 +66,7 @@ public class SpringBootHiveMQEmbeddedLauncher {
 				.build()
 				.writeValue(
 						Files.createFile(Path.of(configuration.getConfigFolder(), "config.xml").toAbsolutePath()).toFile(),
-						configuration.getHivemq());
+						configuration.getConfig());
 	}
 
 	@Bean

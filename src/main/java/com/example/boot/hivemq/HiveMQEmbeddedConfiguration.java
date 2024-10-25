@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -14,16 +17,8 @@ import java.util.List;
 
 @Value
 @Validated
-@ConfigurationProperties("hivemq-ce-embedded")
+@ConfigurationProperties("hivemq")
 public class HiveMQEmbeddedConfiguration {
-
-    @NotBlank
-    @JsonIgnore
-    String logFolder;
-
-    @NotBlank
-    @JsonIgnore
-    String dataFolder;
 
     @NotBlank
     @JsonIgnore
@@ -31,16 +26,23 @@ public class HiveMQEmbeddedConfiguration {
 
     @NotBlank
     @JsonIgnore
+    String dataFolder;
+
+    @NotBlank
+    @JsonIgnore
     String extensionsFolder;
 
+    @NotBlank
+    @JsonIgnore
+    String logFolder;
+
     @NotNull
-    @JsonProperty("hivemq")
-    HiveMQ hivemq;
+    HiveMQ config;
 
     @Value
     @Validated
     @JsonRootName(value = "hivemq")
-    private static class HiveMQ {
+    public static class HiveMQ {
 
         @JacksonXmlProperty(isAttribute = true, localName = "xmlns:xsi")
         String nameSpace = "http://www.w3.org/2001/XMLSchema-instance";
@@ -57,20 +59,28 @@ public class HiveMQEmbeddedConfiguration {
 
     @Value
     @Validated
-    private static class Listeners {
+    public static class Listeners {
 
         @JsonProperty("tcp-listener")
         @JacksonXmlElementWrapper(useWrapping = false)
         List<TcpListener> tcpListeners;
 
+        @JsonProperty("tls-tcp-listener")
+        @JacksonXmlElementWrapper(useWrapping = false)
+        List<SecureTcpListener> secureTcpListeners;
+
         @JsonProperty("websocket-listener")
         @JacksonXmlElementWrapper(useWrapping = false)
         List<WebsocketListener> websocketListeners;
+
+        @JsonProperty("tls-websocket-listener")
+        @JacksonXmlElementWrapper(useWrapping = false)
+        List<SecureWebsocketListener> secureWebsocketListeners;
     }
 
     @Value
     @Validated
-    private static class TcpListener {
+    public static class TcpListener {
 
         String name;
 
@@ -85,7 +95,25 @@ public class HiveMQEmbeddedConfiguration {
 
     @Value
     @Validated
-    private static class WebsocketListener {
+    public static class SecureTcpListener {
+
+        String name;
+
+        @Min(1025)
+        @Max(65535)
+        Integer port;
+
+        @NotBlank
+        @JsonProperty("bind-address")
+        String bindAddress;
+
+        @NotNull
+        TLS tls;
+    }
+
+    @Value
+    @Validated
+    public static class WebsocketListener {
 
         String name;
 
@@ -103,22 +131,43 @@ public class HiveMQEmbeddedConfiguration {
         @JsonProperty("allow-extensions")
         Boolean allowExtensions;
 
-        @JsonProperty("subprotocols")
-        SubProtocols subProtocols;
+        @JacksonXmlElementWrapper(localName = "subprotocols")
+        @JsonProperty("subprotocol")
+        List<String> subprotocols;
+    }
 
-        @Value
-        @Validated
-        private static class SubProtocols {
+    @Value
+    @Validated
+    public static class SecureWebsocketListener {
 
-            @JacksonXmlElementWrapper(useWrapping = false)
-            List<String> subprotocol;
-        }
+        String name;
+
+        @Min(1024)
+        @Max(65535)
+        Integer port;
+
+        @NotBlank
+        @JsonProperty("bind-address")
+        String bindAddress;
+
+        @NotBlank
+        String path;
+
+        @JsonProperty("allow-extensions")
+        Boolean allowExtensions;
+
+        @JacksonXmlElementWrapper(localName = "subprotocols")
+        @JsonProperty("subprotocol")
+        List<String> subprotocols;
+
+        @NotNull
+        TLS tls;
     }
 
 
     @Value
     @Validated
-    private static class Mqtt {
+    public static class Mqtt {
 
         @JsonProperty("session-expiry")
         Expiry sessionExpiry;
@@ -158,7 +207,7 @@ public class HiveMQEmbeddedConfiguration {
 
         @Value
         @Validated
-        private static class Expiry {
+        public static class Expiry {
 
             @Min(0)
             @Max(4_294_967_296L)
@@ -168,7 +217,7 @@ public class HiveMQEmbeddedConfiguration {
 
         @Value
         @Validated
-        private static class Packets {
+        public static class Packets {
 
             @Min(1)
             @Max(268_435_460L)
@@ -178,7 +227,7 @@ public class HiveMQEmbeddedConfiguration {
 
         @Value
         @Validated
-        private static class ReceiveMaximum {
+        public static class ReceiveMaximum {
 
             @Min(1)
             @Max(4_294_967_296L)
@@ -188,7 +237,7 @@ public class HiveMQEmbeddedConfiguration {
 
         @Value
         @Validated
-        private static class KeepAlive {
+        public static class KeepAlive {
 
             @Min(1)
             @Max(4_294_967_296L)
@@ -201,7 +250,7 @@ public class HiveMQEmbeddedConfiguration {
 
         @Value
         @Validated
-        private static class TopicAlias {
+        public static class TopicAlias {
 
             @Min(1)
             @Max(65535L)
@@ -214,7 +263,7 @@ public class HiveMQEmbeddedConfiguration {
 
         @Value
         @Validated
-        private static class QualityOfService {
+        public static class QualityOfService {
 
             @Min(0)
             @Max(2L)
@@ -224,7 +273,7 @@ public class HiveMQEmbeddedConfiguration {
 
         @Value
         @Validated
-        private static class QueuedMessages {
+        public static class QueuedMessages {
 
             @Min(1)
             @Max(4_294_967_296L)
@@ -234,7 +283,7 @@ public class HiveMQEmbeddedConfiguration {
             @JsonProperty("strategy")
             Strategy strategy;
 
-            private enum Strategy {
+            public enum Strategy {
 
                 @JsonProperty("discard")
                 discard,
@@ -247,7 +296,7 @@ public class HiveMQEmbeddedConfiguration {
 
     @Value
     @Validated
-    private static class MaybeEnabled {
+    public static class MaybeEnabled {
 
         @JsonProperty("enabled")
         Boolean enabled;
@@ -255,7 +304,7 @@ public class HiveMQEmbeddedConfiguration {
 
     @Value
     @Validated
-    private static class Security {
+    public static class Security {
 
         @JsonProperty("allow-empty-client-id")
         MaybeEnabled allowEmptyClientId;
@@ -272,15 +321,72 @@ public class HiveMQEmbeddedConfiguration {
 
     @Value
     @Validated
-    private static class Persistence {
+    public static class Persistence {
 
-        private enum Mode {
+        public enum Mode {
 
             @JsonProperty("in-memory")
             inMemory
         }
 
-        @NotNull
         Mode mode;
+    }
+
+    @Value
+    @Validated
+    public static class TLS {
+
+        @JacksonXmlElementWrapper(localName = "protocols")
+        List<String> protocol;
+
+        @JacksonXmlElementWrapper(localName = "cipher-suites")
+        @JsonProperty("cipher-suite")
+        List<String> cipherSuite;
+
+        @JsonProperty("client-authentication-mode")
+        ClientAuthenticationMode clientAuthenticationMode;
+
+        @JsonProperty("handshake-timeout")
+        Integer handshakeTimeout;
+
+        @NotNull
+        KeyStore keystore;
+
+        TrustStore truststore;
+
+        @JsonProperty("concurrent-handshake-limit")
+        Integer concurrentHandshakeLimit;
+
+        @JsonProperty("native-ssl")
+        Boolean nativeSSL;
+
+        @Value
+        @Validated
+        public static class KeyStore {
+
+            @NotBlank
+            String path;
+
+            @NotBlank
+            String password;
+
+            @JsonProperty("private-key-password")
+            String privateKeyPassword;
+        }
+
+        @Value
+        @Validated
+        public static class TrustStore {
+
+            @NotBlank
+            String path;
+
+            @NotBlank
+            String password;
+        }
+
+        public enum ClientAuthenticationMode {
+            NONE, OPTIONAL, REQUIRED
+        }
     }
 }
