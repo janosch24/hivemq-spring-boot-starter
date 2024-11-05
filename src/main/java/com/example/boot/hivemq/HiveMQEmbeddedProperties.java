@@ -1,43 +1,40 @@
 package com.example.boot.hivemq;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import org.springframework.lang.Nullable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
-@Value
+@Data
 @Validated
 @ConfigurationProperties("hivemq")
-public class HiveMQEmbeddedConfiguration {
+public class HiveMQEmbeddedProperties {
 
     @NotBlank
-    @JsonIgnore
-    String configFolder;
+    private String configFolder = ".hivemq/conf";
 
     @NotBlank
-    @JsonIgnore
-    String dataFolder;
+    private String dataFolder = ".hivemq/data";
 
     @NotBlank
-    @JsonIgnore
-    String extensionsFolder;
+    private String extensionsFolder = ".hivemq/extensions";
 
     @NotBlank
-    @JsonIgnore
-    String logFolder;
+    private String logFolder = ".hivemq/log";
 
     @NotNull
-    HiveMQ config;
+    private HiveMQ config;
 
     @Value
     @Validated
@@ -52,8 +49,13 @@ public class HiveMQEmbeddedConfiguration {
         @NotNull
         Listeners listeners;
 
+        @Nullable
         Mqtt mqtt;
+
+        @Nullable
         Security security;
+
+        @Nullable
         Persistence persistence;
     }
 
@@ -82,6 +84,7 @@ public class HiveMQEmbeddedConfiguration {
     @Validated
     public static class TcpListener {
 
+        @Nullable
         String name;
 
         @Min(1025)
@@ -97,6 +100,7 @@ public class HiveMQEmbeddedConfiguration {
     @Validated
     public static class SecureTcpListener {
 
+        @Nullable
         String name;
 
         @Min(1025)
@@ -115,6 +119,7 @@ public class HiveMQEmbeddedConfiguration {
     @Validated
     public static class WebsocketListener {
 
+        @Nullable
         String name;
 
         @Min(1024)
@@ -128,6 +133,7 @@ public class HiveMQEmbeddedConfiguration {
         @NotBlank
         String path;
 
+        @Nullable
         @JsonProperty("allow-extensions")
         Boolean allowExtensions;
 
@@ -140,6 +146,7 @@ public class HiveMQEmbeddedConfiguration {
     @Validated
     public static class SecureWebsocketListener {
 
+        @Nullable
         String name;
 
         @Min(1024)
@@ -153,6 +160,7 @@ public class HiveMQEmbeddedConfiguration {
         @NotBlank
         String path;
 
+        @Nullable
         @JsonProperty("allow-extensions")
         Boolean allowExtensions;
 
@@ -169,39 +177,51 @@ public class HiveMQEmbeddedConfiguration {
     @Validated
     public static class Mqtt {
 
+        @Nullable
         @JsonProperty("session-expiry")
         Expiry sessionExpiry;
 
+        @Nullable
         @JsonProperty("message-expiry")
         Expiry messageExpiry;
 
+        @Nullable
         @JsonProperty("packets")
         Packets packets;
 
+        @Nullable
         @JsonProperty("receive-maximum")
         ReceiveMaximum receiveMaximum;
 
+        @Nullable
         @JsonProperty("keep-alive")
         KeepAlive keepAlive;
 
+        @Nullable
         @JsonProperty("topic-alias")
         TopicAlias topicAlias;
 
+        @Nullable
         @JsonProperty("subscription-identifier")
         MaybeEnabled subscriptionIdentifier;
 
+        @Nullable
         @JsonProperty("wildcard-subscriptions")
         MaybeEnabled wildcardSubscriptions;
 
+        @Nullable
         @JsonProperty("shared-subscriptions")
         MaybeEnabled sharedSubscriptions;
 
+        @Nullable
         @JsonProperty("retained-messages")
         MaybeEnabled retainedMessages;
 
+        @Nullable
         @JsonProperty("quality-of-service")
         QualityOfService qualityOfService;
 
+        @Nullable
         @JsonProperty("queued-messages")
         QueuedMessages queuedMessages;
 
@@ -257,6 +277,7 @@ public class HiveMQEmbeddedConfiguration {
             @JsonProperty("max-per-client")
             Long maxPerClient;
 
+            @Nullable
             @JsonProperty("enabled")
             Boolean enabled;
         }
@@ -280,6 +301,7 @@ public class HiveMQEmbeddedConfiguration {
             @JsonProperty("max-queue-size")
             Long maxQueueSize;
 
+            @Nullable
             @JsonProperty("strategy")
             Strategy strategy;
 
@@ -298,6 +320,7 @@ public class HiveMQEmbeddedConfiguration {
     @Validated
     public static class MaybeEnabled {
 
+        @NotNull
         @JsonProperty("enabled")
         Boolean enabled;
     }
@@ -306,15 +329,19 @@ public class HiveMQEmbeddedConfiguration {
     @Validated
     public static class Security {
 
+        @Nullable
         @JsonProperty("allow-empty-client-id")
         MaybeEnabled allowEmptyClientId;
 
+        @Nullable
         @JsonProperty("payload-format-validation")
         MaybeEnabled payloadFormatValidation;
 
+        @Nullable
         @JsonProperty("utf8-validation")
         MaybeEnabled utf8Validation;
 
+        @Nullable
         @JsonProperty("allow-request-problem-information")
         MaybeEnabled allowRequestProblemInformation;
     }
@@ -329,6 +356,7 @@ public class HiveMQEmbeddedConfiguration {
             inMemory
         }
 
+        @NotNull
         Mode mode;
     }
 
@@ -336,27 +364,34 @@ public class HiveMQEmbeddedConfiguration {
     @Validated
     public static class TLS {
 
+        @Nullable
         @JacksonXmlElementWrapper(localName = "protocols")
         List<String> protocol;
 
+        @Nullable
         @JacksonXmlElementWrapper(localName = "cipher-suites")
         @JsonProperty("cipher-suite")
         List<String> cipherSuite;
 
+        @Nullable
         @JsonProperty("client-authentication-mode")
         ClientAuthenticationMode clientAuthenticationMode;
 
+        @Nullable
         @JsonProperty("handshake-timeout")
         Integer handshakeTimeout;
 
         @NotNull
         KeyStore keystore;
 
+        @Nullable
         TrustStore truststore;
 
+        @Nullable
         @JsonProperty("concurrent-handshake-limit")
         Integer concurrentHandshakeLimit;
 
+        @Nullable
         @JsonProperty("native-ssl")
         Boolean nativeSSL;
 
@@ -370,6 +405,7 @@ public class HiveMQEmbeddedConfiguration {
             @NotBlank
             String password;
 
+            @Nullable
             @JsonProperty("private-key-password")
             String privateKeyPassword;
         }
