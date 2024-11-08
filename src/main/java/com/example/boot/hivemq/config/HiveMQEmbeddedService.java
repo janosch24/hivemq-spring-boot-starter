@@ -1,9 +1,11 @@
-package com.example.boot.hivemq;
+package com.example.boot.hivemq.config;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import com.hivemq.embedded.EmbeddedHiveMQ;
+import com.hivemq.embedded.EmbeddedHiveMQBuilder;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -63,15 +65,22 @@ public class HiveMQEmbeddedService {
                         properties.getConfig());
     }
 
-    @Bean
-    public CommandLineRunner startup(ApplicationContext ctx) {
+//    @Bean
+//    public CommandLineRunner startup(ApplicationContext ctx) {
+//        return args -> {
+//            this.embeddedHiveMQ =
+//                    this.embeddedHiveMQBuilder.build();
+//            this.embeddedHiveMQ.start().join();
+//        };
+//    }
 
-        return args -> this.embeddedHiveMQ.start().join();
+    @PostConstruct
+    public void startup() {
+        this.embeddedHiveMQ.start().join();
     }
 
     @PreDestroy
     public void shutdown() {
-
         this.embeddedHiveMQ.stop().join();
     }
 }

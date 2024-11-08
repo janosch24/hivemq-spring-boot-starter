@@ -1,6 +1,6 @@
 <included>
 
-    <springProperty scope="context" name="hivemq.log.folder" source="hivemq-ce-embedded.log-folder"/>
+    <springProperty scope="context" name="hivemq.log.folder" source="hivemq.log-folder"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
