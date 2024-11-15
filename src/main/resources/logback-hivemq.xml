@@ -6,8 +6,8 @@
 
 
     <!-- Properties provided by springboot framework -->
-    <springProperty scope="context" name="hivemq.log.folder" source="hivemq.logging.folder"/>
-    <springProperty scope="context" name="hivemq.log.level" source="hivemq.logging.level"/>
+    <springProperty scope="context" name="hivemq.log.folder" source="hivemq.log.folder"/>
+    <springProperty scope="context" name="hivemq.log.level" source="hivemq.log.level"/>
 
 
     <!-- Appenders ... -->

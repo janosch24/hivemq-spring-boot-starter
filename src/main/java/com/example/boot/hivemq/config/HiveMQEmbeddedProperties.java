@@ -33,7 +33,8 @@ public class HiveMQEmbeddedProperties {
     private Extensions extensions = new Extensions();
 
     @NotNull
-    private HiveMQ config;
+    private HiveMQ config =
+            new HiveMQ(Listeners.defaults(), null, null, null);
 
     @Value
     @Validated
@@ -108,6 +109,11 @@ public class HiveMQEmbeddedProperties {
         @JsonProperty("tls-websocket-listener")
         @JacksonXmlElementWrapper(useWrapping = false)
         List<SecureWebsocketListener> secureWebsocketListeners;
+
+        public static Listeners defaults() {
+            return new Listeners(List.of(TcpListener.defaultListener("0.0.0.0", 1883)),
+                    null, null, null);
+        }
     }
 
     @Value
@@ -116,13 +122,17 @@ public class HiveMQEmbeddedProperties {
 
         String name;
 
+        @NotBlank
+        @JsonProperty("bind-address")
+        String bindAddress;
+
         @Min(1025)
         @Max(65535)
         Integer port;
 
-        @NotBlank
-        @JsonProperty("bind-address")
-        String bindAddress;
+        public static TcpListener defaultListener(@NotBlank String bindAddress, int port) {
+            return new TcpListener(null, bindAddress, port);
+        }
     }
 
     @Value
@@ -131,13 +141,13 @@ public class HiveMQEmbeddedProperties {
 
         String name;
 
-        @Min(1025)
-        @Max(65535)
-        Integer port;
-
         @NotBlank
         @JsonProperty("bind-address")
         String bindAddress;
+
+        @Min(1025)
+        @Max(65535)
+        Integer port;
 
         @NotNull
         TLS tls;
@@ -149,13 +159,13 @@ public class HiveMQEmbeddedProperties {
 
         String name;
 
-        @Min(1024)
-        @Max(65535)
-        Integer port;
-
         @NotBlank
         @JsonProperty("bind-address")
         String bindAddress;
+
+        @Min(1024)
+        @Max(65535)
+        Integer port;
 
         @NotBlank
         String path;
@@ -174,13 +184,13 @@ public class HiveMQEmbeddedProperties {
 
         String name;
 
-        @Min(1024)
-        @Max(65535)
-        Integer port;
-
         @NotBlank
         @JsonProperty("bind-address")
         String bindAddress;
+
+        @Min(1024)
+        @Max(65535)
+        Integer port;
 
         @NotBlank
         String path;

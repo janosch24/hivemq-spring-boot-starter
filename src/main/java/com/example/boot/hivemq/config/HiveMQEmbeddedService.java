@@ -1,5 +1,7 @@
 package com.example.boot.hivemq.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -8,6 +10,7 @@ import com.hivemq.embedded.EmbeddedExtension;
 import com.hivemq.embedded.EmbeddedHiveMQ;
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
+import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extension.sdk.api.packets.general.Qos;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
@@ -40,10 +43,23 @@ public class HiveMQEmbeddedService {
 
         prepareEnvironment(properties);
 
-        EmbeddedExtensionsWrapper embeddedExtensionsWrapper =
-                new EmbeddedExtensionsWrapper(
+        int priority =
+                extensions.stream()
+                        .map(EmbeddedExtension::getPriority)
+                        .max(Comparator.nullsFirst(Integer::compare))
+                        .orElse(0);
+
+        int startPriority =
+                extensions.stream()
+                        .map(EmbeddedExtension::getStartPriority)
+                        .max(Comparator.nullsFirst(Integer::compare))
+                        .orElse(1000);
+
+        EmbeddedExtensionsCollector embeddedExtensionsWrapper =
+                new EmbeddedExtensionsCollector(
                         extensions.stream()
-                                  .sorted(Comparator.comparing(EmbeddedExtension::getStartPriority))
+                                  .map(EmbeddedExtensionWrapper::wrap)
+                                  .sorted(Comparator.comparing(EmbeddedExtension::getStartPriority).reversed())
                                   .toList(),
                         properties.getExtensions().getPublishInfo());
 
@@ -58,16 +74,8 @@ public class HiveMQEmbeddedService {
                                         .withName("Springboot-EmbeddedHiveMQ Extensions Wrapper")
                                         .withAuthor("arajan")
                                         .withVersion("1.0.0")
-                                        .withPriority(embeddedExtensionsWrapper.getExtensions()
-                                                .stream()
-                                                .findFirst()
-                                                .map(EmbeddedExtension::getPriority)
-                                                .orElse(0))
-                                        .withStartPriority(embeddedExtensionsWrapper.getExtensions()
-                                                .stream()
-                                                .findFirst()
-                                                .map(EmbeddedExtension::getStartPriority)
-                                                .orElse(0))
+                                        .withPriority(priority)
+                                        .withStartPriority(startPriority)
                                         .withExtensionMain(embeddedExtensionsWrapper)
                                         .build())
                         .withoutLoggingBootstrap()
@@ -112,14 +120,23 @@ public class HiveMQEmbeddedService {
     }
 
     @Value
-    private static class EmbeddedExtensionsWrapper implements ExtensionMain {
+    private static class EmbeddedExtensionsCollector implements ExtensionMain {
 
-        List<EmbeddedExtension> extensions;
+        List<EmbeddedExtensionWrapper> extensions;
         HiveMQEmbeddedProperties.Extensions.PublishInfo publishInfo;
 
         @Override
         public void extensionStart(@NotNull ExtensionStartInput extensionStartInput, @NotNull ExtensionStartOutput extensionStartOutput) {
-            this.extensions.forEach(ext -> ext.getExtensionMain().extensionStart(extensionStartInput, extensionStartOutput));
+            this.extensions.forEach(extension -> {
+                try {
+                    extension.getExtensionMain().extensionStart(extensionStartInput, extensionStartOutput);
+                    extension.setStatus(Status.started);
+                }
+                catch(Throwable th) {
+                    log.error("Extension with id {} failed during startup.", extension.getId(), th);
+                    extension.setStatus(Status.failed);
+                }
+            });
 
             // Additional publish info if required ...
             if (this.publishInfo.isEnabled()) {
@@ -135,12 +152,11 @@ public class HiveMQEmbeddedService {
                         // Check if broker is ready
                         if (Services.adminService().getCurrentStage() == LifecycleStage.STARTED_SUCCESSFULLY) {
                             this.extensions
-                                    .stream()
-                                    .map(Info::of)
                                     .forEach(info ->
                                             Services.publishService()
                                                     .publish(Builders.retainedPublish()
-                                                            .topic(String.join("/", this.publishInfo.getTopic(), info.getId()))
+                                                            .topic(String.join("/", this.publishInfo.getTopic(),
+                                                                    String.valueOf(this.extensions.indexOf(info))))
                                                             .payload(ByteBuffer.wrap(info.jsonify().getBytes(StandardCharsets.UTF_8)))
                                                             .qos(Qos.AT_LEAST_ONCE)
                                                             .build()));
@@ -154,34 +170,72 @@ public class HiveMQEmbeddedService {
 
         @Override
         public void extensionStop(@NotNull ExtensionStopInput extensionStopInput, @NotNull ExtensionStopOutput extensionStopOutput) {
-            this.extensions.forEach(ext -> ext.getExtensionMain().extensionStop(extensionStopInput, extensionStopOutput));
+            this.extensions.forEach(extension -> {
+                try {
+                    extension.getExtensionMain().extensionStop(extensionStopInput, extensionStopOutput);
+                }
+                catch(Throwable th) {
+                    log.error("Extension with id {} failed during shutdown.", extension.getId(), th);
+                }
+            });
         }
     }
 
-    @Value
-    @Builder
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    private static class Info {
+    @Data
+    @RequiredArgsConstructor(staticName = "wrap")
+    @JsonPropertyOrder({ "status", "name", "id", "version", "author", "startPriority", "priority" })
+    private static class EmbeddedExtensionWrapper implements EmbeddedExtension {
 
         private static final ObjectMapper mapper = new ObjectMapper();
 
-        String id;
-        String name;
-        String author;
-        String version;
+        @JsonIgnore
+        private final EmbeddedExtension delegate;
+
+        private Status status = Status.loaded;
+
+        @Override
+        public @NotNull String getId() {
+            return this.delegate.getId();
+        }
+
+        @Override
+        public @NotNull String getName() {
+            return this.delegate.getName();
+        }
+
+        @Override
+        public @NotNull String getVersion() {
+            return this.delegate.getVersion();
+        }
+
+        @Override
+        public @Nullable String getAuthor() {
+            return this.delegate.getAuthor();
+        }
+
+        @Override
+        public int getPriority() {
+            return this.delegate.getPriority();
+        }
+
+        @Override
+        public int getStartPriority() {
+            return this.delegate.getStartPriority();
+        }
+
+        @Override
+        @JsonIgnore
+        public @NotNull ExtensionMain getExtensionMain() {
+            return this.delegate.getExtensionMain();
+        }
 
         @SneakyThrows
         public String jsonify() {
             return mapper.writeValueAsString(this);
         }
+    }
 
-        public static Info of(EmbeddedExtension extension) {
-            return Info.builder()
-                    .id(extension.getId())
-                    .name(extension.getName())
-                    .author(extension.getAuthor())
-                    .version(extension.getVersion())
-                    .build();
-        }
+    private enum Status {
+        loaded, started, failed
     }
 }

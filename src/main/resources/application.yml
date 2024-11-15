@@ -9,31 +9,32 @@ logging:
   file:
     name: log/application.log
 
-hivemq:
+#hivemq:
+#  enabled: true
 #  config.folder: .hivemq/config
 #  data.folder: .hivemq/data
 #  extensions.folder: .hivemq/extensions
 #  extensions.info.enabled: true
 #  extensions.info.topic: "$SYS/extensions"
-#  logging.folder: .hivemq/log
-#  logging.level: info
+#  log.folder: .hivemq/log
+#  log.level: info
 
-  config:
-    listeners:
-      tcp-listeners:
-        - name: defaultTcpListener
-          port: 1883
-          bind-address: 0.0.0.0
-
-      websocket-listeners:
-        - name: defaultWebsocketListener
-          port: 8000
-          path: /mqtt
-          bind-address: localhost
-          allow-extensions: true
-          subprotocols:
-            - mqttv3.1
-            - mqtt
+#  config:
+#    listeners:
+#      tcp-listeners:
+#        - name: defaultTcpListener
+#          port: 1883
+#          bind-address: 0.0.0.0
+#
+#      websocket-listeners:
+#        - name: defaultWebsocketListener
+#          port: 8000
+#          path: /mqtt
+#          bind-address: 0.0.0.0
+#          allow-extensions: true
+#          subprotocols:
+#            - mqttv3.1
+#            - mqtt
 
 #    mqtt:
 #      session-expiry.max-interval: 60

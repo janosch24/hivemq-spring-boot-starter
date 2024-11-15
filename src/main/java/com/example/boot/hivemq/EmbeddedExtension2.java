@@ -51,6 +51,7 @@ public class EmbeddedExtension2 implements EmbeddedExtension, ExtensionMain {
     @Override
     public void extensionStart(@NotNull ExtensionStartInput extensionStartInput, @NotNull ExtensionStartOutput extensionStartOutput) {
         log.info("{} starting ...", this.getName());
+        throw new RuntimeException("Ooops ...");
     }
 
     @Override
