@@ -1,37 +1,40 @@
 <included>
 
-    <springProperty scope="context" name="hivemq.log.folder" source="hivemq.log-folder"/>
+    <!-- Some defaults -->
+    <property name="DEFAULT_HIVEMQ_LOG_FOLDER" value=".hivemq/log"/>
+    <property name="DEFAULT_HIVEMQ_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level - %msg%n%ex"/>
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level - %msg%n%ex</pattern>
-        </encoder>
-    </appender>
 
+    <!-- Properties provided by springboot framework -->
+    <springProperty scope="context" name="hivemq.log.folder" source="hivemq.logging.folder"/>
+    <springProperty scope="context" name="hivemq.log.level" source="hivemq.logging.level"/>
+
+
+    <!-- Appenders ... -->
     <appender name="HIVEMQ-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${hivemq.log.folder}/hivemq.log</file>
+        <file>${hivemq.log.folder:-${DEFAULT_HIVEMQ_LOG_FOLDER}}/hivemq.log</file>
         <append>true</append>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>${hivemq.log.folder}/hivemq.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${hivemq.log.folder:-${DEFAULT_HIVEMQ_LOG_FOLDER}}/hivemq.%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- keep 1 week worth of history -->
             <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level - %msg%n%ex</pattern>
+            <pattern>${DEFAULT_PATTERN:-${DEFAULT_HIVEMQ_LOG_PATTERN}}</pattern>
         </encoder>
     </appender>
 
     <appender name="MIGRATIONS-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${hivemq.log.folder}/migration.log</file>
+        <file>${hivemq.log.folder:-${DEFAULT_HIVEMQ_LOG_FOLDER}}/migration.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level - %msg%n%ex</pattern>
+            <pattern>${DEFAULT_PATTERN:-${DEFAULT_HIVEMQ_LOG_PATTERN}}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${hivemq.log.folder}/migration-%i.log.zip</fileNamePattern>
+            <fileNamePattern>${hivemq.log.folder:-${DEFAULT_HIVEMQ_LOG_FOLDER}}/migration-%i.log.zip</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>5</maxIndex>
         </rollingPolicy>
@@ -41,19 +44,25 @@
     </appender>
 
     <appender name="EVENT-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${hivemq.log.folder}/event.log</file>
+        <file>${hivemq.log.folder:-${DEFAULT_HIVEMQ_LOG_FOLDER}}/event.log</file>
         <append>true</append>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %msg%n%ex</pattern>
+            <pattern>${DEFAULT_PATTERN:-${DEFAULT_HIVEMQ_LOG_PATTERN}}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${hivemq.log.folder}/event-%i.log.zip</fileNamePattern>
+            <fileNamePattern>${hivemq.log.folder:-${DEFAULT_HIVEMQ_LOG_FOLDER}}/event-%i.log.zip</fileNamePattern>
             <minIndex>1</minIndex>
             <maxIndex>5</maxIndex>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <maxFileSize>1MB</maxFileSize>
         </triggeringPolicy>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${DEFAULT_PATTERN:-${DEFAULT_HIVEMQ_LOG_PATTERN}}</pattern>
+        </encoder>
     </appender>
 
 
@@ -80,13 +89,13 @@
         <appender-ref ref="MIGRATIONS-FILE"/>
     </logger>
 
+
     <!-- root -->
-    <root level="${HIVEMQ_LOG_LEVEL:-INFO}">
+    <logger name="com.hivemq" level="${hivemq.log.level:-INFO}" additivity="false">
         <appender-ref ref="HIVEMQ-FILE"/>
-        <!--
         <appender-ref ref="CONSOLE"/>
-        -->
-    </root>
+    </logger>
+
 
     <logger name="jetbrains.exodus" level="WARN"/>
     <logger name="com.google.common.util.concurrent.Futures.CombinedFuture" level="OFF"/>
