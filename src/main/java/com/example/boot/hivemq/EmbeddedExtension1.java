@@ -1,7 +1,6 @@
 package com.example.boot.hivemq;
 
 import com.hivemq.embedded.EmbeddedExtension;
-import com.hivemq.embedded.EmbeddedExtensionBuilder;
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;
