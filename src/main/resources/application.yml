@@ -10,10 +10,13 @@ logging:
     name: log/application.log
 
 hivemq:
-  config-folder: .hivemq/conf
-  data-folder: .hivemq/data
-  log-folder: .hivemq/log
-  extensions-folder: .hivemq/extensions
+#  config.folder: .hivemq/config
+#  data.folder: .hivemq/data
+#  extensions.folder: .hivemq/extensions
+#  extensions.info.enabled: true
+#  extensions.info.topic: "$SYS/extensions"
+#  logging.folder: .hivemq/log
+#  logging.level: info
 
   config:
     listeners:
@@ -32,28 +35,28 @@ hivemq:
             - mqttv3.1
             - mqtt
 
-    mqtt:
-      session-expiry.max-interval: 60
-      message-expiry.max-interval: 3600
-      packets.max-packet-size: 268435460
-      receive-maximum.server-receive-maximum: 10
-      keep-alive.max-keep-alive: 65535
-      keep-alive.allow-unlimited: false
-      topic-alias.enabled: true
-      topic-alias.max-per-client: 5
-      subscription-identifier.enabled: true
-      wildcard-subscriptions.enabled: true
-      shared-subscriptions.enabled: true
-      retained-messages.enabled: true
-      quality-of-service.max-qos: 2
-      queued-messages.max-queue-size: 1000
-      queued-messages.strategy: discard-oldest
-
-    security:
-      allow-empty-client-id.enabled: false
-      payload-format-validation.enabled: false
-      utf8-validation.enabled: true
-      allow-request-problem-information.enabled: true
-
-    persistence:
-      mode: in-memory
+#    mqtt:
+#      session-expiry.max-interval: 60
+#      message-expiry.max-interval: 3600
+#      packets.max-packet-size: 268435460
+#      receive-maximum.server-receive-maximum: 10
+#      keep-alive.max-keep-alive: 65535
+#      keep-alive.allow-unlimited: false
+#      topic-alias.enabled: true
+#      topic-alias.max-per-client: 5
+#      subscription-identifier.enabled: true
+#      wildcard-subscriptions.enabled: true
+#      shared-subscriptions.enabled: true
+#      retained-messages.enabled: true
+#      quality-of-service.max-qos: 2
+#      queued-messages.max-queue-size: 1000
+#      queued-messages.strategy: discard-oldest
+#
+#    security:
+#      allow-empty-client-id.enabled: false
+#      payload-format-validation.enabled: false
+#      utf8-validation.enabled: true
+#      allow-request-problem-information.enabled: true
+#
+#    persistence:
+#      mode: in-memory

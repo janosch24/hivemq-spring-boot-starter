@@ -1,5 +1,7 @@
 package com.example.boot.hivemq.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
@@ -20,43 +22,75 @@ import java.util.List;
 @ConfigurationProperties("hivemq")
 public class HiveMQEmbeddedProperties {
 
-    @NotBlank
-    private String configFolder = ".hivemq/conf";
+    private static final String defaultConfigFolder = ".hivemq/conf";
+    private static final String defaultDataFolder = ".hivemq/data";
+    private static final String defaultExtensionsFolder = ".hivemq/extensions";
 
-    @NotBlank
-    private String dataFolder = ".hivemq/data";
+    @NotNull
+    private Folder data = new Folder(defaultDataFolder);
 
-    @NotBlank
-    private String extensionsFolder = ".hivemq/extensions";
-
-    @NotBlank
-    private String logFolder = ".hivemq/log";
+    @NotNull
+    private Extensions extensions = new Extensions();
 
     @NotNull
     private HiveMQ config;
 
     @Value
     @Validated
+    public static class Folder {
+
+        @NotBlank
+        String folder;
+    }
+
+    @Data
+    @Validated
+    public static class Extensions {
+
+        @NotBlank
+        private String folder = defaultExtensionsFolder;
+
+        private PublishInfo publishInfo = new PublishInfo();
+
+        @Data
+        @Validated
+        public static class PublishInfo {
+
+            private boolean enabled = true;
+
+            @NotBlank
+            private String topic = "$SYS/extensions";
+        }
+    }
+
+    @Data
+    @Validated
     @JsonRootName(value = "hivemq")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class HiveMQ {
 
         @JacksonXmlProperty(isAttribute = true, localName = "xmlns:xsi")
-        String nameSpace = "http://www.w3.org/2001/XMLSchema-instance";
+        private final String nameSpace = "http://www.w3.org/2001/XMLSchema-instance";
         @JacksonXmlProperty(isAttribute = true, localName = "xsi:noNamespaceSchemaLocation")
-        String schemaLocation = "hivemq-config.xsd";
+        private final String schemaLocation = "hivemq-config.xsd";
+
+        @NotBlank
+        @JsonIgnore
+        private String folder = ".hivemq/conf";
 
         @NotNull
-        Listeners listeners;
+        private final Listeners listeners;
 
-        Mqtt mqtt;
+        private final Mqtt mqtt;
 
-        Security security;
+        private final Security security;
 
-        Persistence persistence;
+        private final Persistence persistence;
     }
 
     @Value
     @Validated
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class Listeners {
 
         @JsonProperty("tcp-listener")
@@ -165,6 +199,7 @@ public class HiveMQEmbeddedProperties {
 
     @Value
     @Validated
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class Mqtt {
 
         @JsonProperty("session-expiry")
@@ -303,6 +338,7 @@ public class HiveMQEmbeddedProperties {
 
     @Value
     @Validated
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class Security {
 
         @JsonProperty("allow-empty-client-id")
@@ -320,6 +356,7 @@ public class HiveMQEmbeddedProperties {
 
     @Value
     @Validated
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class Persistence {
 
         public enum Mode {
