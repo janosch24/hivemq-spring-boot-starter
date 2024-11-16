@@ -9,13 +9,14 @@ logging:
   file:
     name: log/application.log
 
-#hivemq:
+# hivemq:
 #  enabled: true
 #  config.folder: .hivemq/config
 #  data.folder: .hivemq/data
 #  extensions.folder: .hivemq/extensions
-#  extensions.info.enabled: true
-#  extensions.info.topic: "$SYS/extensions"
+#  extensions.collector.enabled: true
+#  extensions.collector.info.enabled: true
+#  extensions.collector.info.topic: "boot/extensions"
 #  log.folder: .hivemq/log
 #  log.level: info
 

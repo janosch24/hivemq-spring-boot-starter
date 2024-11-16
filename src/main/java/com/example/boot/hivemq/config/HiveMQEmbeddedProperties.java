@@ -51,7 +51,16 @@ public class HiveMQEmbeddedProperties {
         @NotBlank
         private String folder = defaultExtensionsFolder;
 
-        private PublishInfo publishInfo = new PublishInfo();
+        private Collector collector = new Collector();
+        @Data
+        @Validated
+        public static class Collector {
+
+            private boolean enabled = true;
+
+            private PublishInfo publishInfo = new PublishInfo();
+
+        }
 
         @Data
         @Validated
@@ -60,7 +69,7 @@ public class HiveMQEmbeddedProperties {
             private boolean enabled = true;
 
             @NotBlank
-            private String topic = "$SYS/extensions";
+            private String topic = "boot/extensions";
         }
     }
 
