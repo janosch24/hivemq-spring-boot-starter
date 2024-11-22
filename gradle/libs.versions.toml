@@ -1,0 +1,46 @@
+# This is the version catalog for hivemq-spring-boot-starter.
+# Edit any versions you depend on here!
+# https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
+
+[versions]
+# Build plugins
+spring-boot-version = "3.4.0"
+spring-dependency-management-version = "1.1.6"
+
+# Libraries
+hivemq-version = "2024.7"
+jackson-dataformat-version = "2.17.2"
+jaxb-version = "2.3.1"
+
+
+[plugins]
+# Build-plugins
+org-springframework-boot = { id = "org.springframework.boot", version.ref = "spring-boot-version" }
+io-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management-version" }
+
+
+[libraries]
+# Spring-boot libs
+org-springframework-boot-starter = { module = "org.springframework.boot:spring-boot-starter" }
+org-springframework-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+org-springframework-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+org-springframework-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor" }
+org-springframework-boot-autoconfigure-processor = { module = "org.springframework.boot:spring-boot-autoconfigure-processor" }
+
+# Implementations required by our starter ...
+com-hivemq-community-edition-embedded = { module = "com.hivemq:hivemq-community-edition-embedded", version.ref = "hivemq-version" }
+com-fasterxml-jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson-dataformat-version" }
+javax-xml-bind-jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb-version" }
+org-glassfish-jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version.ref = "jaxb-version" }
+
+# Lombok to reduce boilderolate code
+lombok = { module = "org.projectlombok:lombok" }
+
+# Testing ...
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+
+[bundles]
+# Some bundles for convenience ...
+jaxb-legacy = ["javax-xml-bind-jaxb-api", "org-glassfish-jaxb-runtime"]
+annotation-processors = ["lombok", "org-springframework-boot-configuration-processor", "org-springframework-boot-autoconfigure-processor"]

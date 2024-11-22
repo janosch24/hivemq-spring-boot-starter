@@ -1,4 +1,4 @@
-package com.example.boot.hivemq.config;
+package com.example.hivemq.boot.starter.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

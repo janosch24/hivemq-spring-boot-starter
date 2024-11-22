@@ -1,1 +1,1 @@
-com.example.boot.hivemq.config.HiveMQEmbeddedAutoConfiguration
+com.example.hivemq.boot.starter.config.HiveMQEmbeddedAutoConfiguration

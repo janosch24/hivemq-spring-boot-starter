@@ -1,5 +1,6 @@
-package com.example.boot.hivemq.config;
+package com.example.hivemq.boot.starter.services;
 
+import com.example.hivemq.boot.starter.config.HiveMQEmbeddedProperties;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
@@ -15,11 +16,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Slf4j
-public class HiveMQEmbeddedService {
+public final class HiveMQEmbeddedService {
 
     private final EmbeddedHiveMQ embeddedHiveMQ;
 
-    HiveMQEmbeddedService(HiveMQEmbeddedProperties properties) {
+    public HiveMQEmbeddedService(HiveMQEmbeddedProperties properties) {
 
         prepareEnvironment(properties);
 
@@ -32,7 +33,7 @@ public class HiveMQEmbeddedService {
                         .build();
     }
 
-    HiveMQEmbeddedService(HiveMQEmbeddedProperties properties,
+    public HiveMQEmbeddedService(HiveMQEmbeddedProperties properties,
                           HiveMQEmbeddedExtensionsCollector extensionsCollector) {
 
         prepareEnvironment(properties);

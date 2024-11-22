@@ -1,5 +1,7 @@
-package com.example.boot.hivemq.config;
+package com.example.hivemq.boot.starter.config;
 
+import com.example.hivemq.boot.starter.services.HiveMQEmbeddedExtensionsCollector;
+import com.example.hivemq.boot.starter.services.HiveMQEmbeddedService;
 import com.hivemq.embedded.EmbeddedExtension;
 import lombok.AccessLevel;
 import lombok.Getter;

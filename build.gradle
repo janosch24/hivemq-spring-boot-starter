@@ -1,16 +1,27 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.4'
-	id 'io.spring.dependency-management' version '1.1.6'
+	id 'java-library'
+	id 'maven-publish'
+	alias libs.plugins.org.springframework.boot apply false
+	alias libs.plugins.io.spring.dependency.management
 }
 
-group = 'com.example'
-version = '2024.7'
+version = libs.versions.hivemq.getVersion().get()
+group = 'com.example.hivemq.boot'
 
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
+}
+
+dependencyManagement {
+	imports {
+		mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+	}
+}
+
+repositories {
+	mavenCentral()
 }
 
 configurations {
@@ -19,29 +30,23 @@ configurations {
 	}
 }
 
-repositories {
-	mavenCentral()
-}
-
 dependencies {
-	implementation ('org.springframework.boot:spring-boot-starter')
-	implementation ('org.springframework.boot:spring-boot-starter-validation')
-	implementation ('com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.2')
-	implementation ("com.hivemq:hivemq-community-edition-embedded:${project.version}")
+	api libs.org.springframework.boot.starter
+	api libs.com.hivemq.community.edition.embedded
 
-	// Needed for backwards compatibility hivemq config file reading ...
-	implementation ('jakarta.xml.bind:jakarta.xml.bind-api:2.3.3')
-	implementation ('com.sun.xml.bind:jaxb-impl:2.3.3')
+	implementation libs.org.springframework.boot.starter.validation
+	implementation libs.com.fasterxml.jackson.dataformat.xml
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	// Needed for backwards compatibility for hivemq config file reading ...
+	implementation libs.bundles.jaxb.legacy
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	annotationProcessor libs.bundles.annotation.processors
+
+	testImplementation libs.org.springframework.boot.starter.test
+	testRuntimeOnly libs.junit.platform.launcher
 }
 
-tasks.named("bootJar") {
+tasks.named("jar") {
 	manifest {
 		attributes 'HiveMQ-Version': "${project.version}"
 	}
@@ -49,4 +54,15 @@ tasks.named("bootJar") {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+publishing {
+	publications {
+		starter(MavenPublication) {
+			from components.java
+		}
+	}
+	repositories {
+		mavenLocal()
+	}
 }

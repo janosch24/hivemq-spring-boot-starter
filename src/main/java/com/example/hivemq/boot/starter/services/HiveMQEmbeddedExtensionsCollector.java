@@ -1,5 +1,6 @@
-package com.example.boot.hivemq.config;
+package com.example.hivemq.boot.starter.services;
 
+import com.example.hivemq.boot.starter.config.HiveMQEmbeddedProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -27,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 
 @Value
 @Slf4j
@@ -141,7 +141,7 @@ public class HiveMQEmbeddedExtensionsCollector implements ExtensionMain {
     @Data
     @RequiredArgsConstructor(staticName = "wrap")
     @JsonPropertyOrder({ "status", "id", "name", "version", "author", "startPriority", "priority" })
-    static class HiveMQEmbeddedExtensionWrapper implements EmbeddedExtension {
+    public static final class HiveMQEmbeddedExtensionWrapper implements EmbeddedExtension {
 
         @JsonIgnore
         private final EmbeddedExtension delegate;
