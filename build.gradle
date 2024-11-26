@@ -31,14 +31,14 @@ configurations {
 }
 
 dependencies {
-	api libs.org.springframework.boot.starter
-	api libs.com.hivemq.community.edition.embedded
-
+	implementation libs.org.springframework.boot.starter
 	implementation libs.org.springframework.boot.starter.validation
 	implementation libs.com.fasterxml.jackson.dataformat.xml
 
+	api libs.com.hivemq.community.edition.embedded
+
 	// Needed for backwards compatibility for hivemq config file reading ...
-	implementation libs.bundles.jaxb.legacy
+//	implementation libs.bundles.jaxb.legacy
 
 	annotationProcessor libs.bundles.annotation.processors
 

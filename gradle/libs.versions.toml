@@ -10,7 +10,8 @@ spring-dependency-management-version = "1.1.6"
 # Libraries
 hivemq-version = "2024.7"
 jackson-dataformat-version = "2.17.2"
-jaxb-version = "2.3.1"
+jaxb-api-version = "2.3.3"
+jaxb-runtime-version = "2.3.9"
 
 
 [plugins]
@@ -30,8 +31,8 @@ org-springframework-boot-autoconfigure-processor = { module = "org.springframewo
 # Implementations required by our starter ...
 com-hivemq-community-edition-embedded = { module = "com.hivemq:hivemq-community-edition-embedded", version.ref = "hivemq-version" }
 com-fasterxml-jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson-dataformat-version" }
-javax-xml-bind-jaxb-api = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb-version" }
-org-glassfish-jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version.ref = "jaxb-version" }
+javax-xml-bind-jaxb-api = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version.ref = "jaxb-api-version" }
+javax-xml-bind-jaxb-runtime = { module = "com.sun.xml.bind:jaxb-impl", version.ref = "jaxb-runtime-version" }
 
 # Lombok to reduce boilderolate code
 lombok = { module = "org.projectlombok:lombok" }
@@ -42,5 +43,5 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 
 [bundles]
 # Some bundles for convenience ...
-jaxb-legacy = ["javax-xml-bind-jaxb-api", "org-glassfish-jaxb-runtime"]
+jaxb-legacy = ["javax-xml-bind-jaxb-api", "javax-xml-bind-jaxb-runtime"]
 annotation-processors = ["lombok", "org-springframework-boot-configuration-processor", "org-springframework-boot-autoconfigure-processor"]
