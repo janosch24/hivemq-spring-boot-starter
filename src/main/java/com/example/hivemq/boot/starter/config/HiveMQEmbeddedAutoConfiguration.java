@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Comparator;
@@ -32,8 +33,9 @@ public class HiveMQEmbeddedAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty(value = "hivemq.extensions.collector.enabled", havingValue = "true", matchIfMissing = true)
-    public HiveMQEmbeddedExtensionsCollector hiveMQEmbeddedExtensionsCollector() {
-        return new HiveMQEmbeddedExtensionsCollector(this.properties.getExtensions().getCollector().getPublishInfo(),
+    public HiveMQEmbeddedExtensionsCollector hiveMQEmbeddedExtensionsCollector(BuildProperties buildProperties) {
+        return new HiveMQEmbeddedExtensionsCollector(buildProperties,
+                this.properties.getExtensions().getCollector().getPublishInfo(),
                 this.extensions.stream()
                         .map(HiveMQEmbeddedExtensionsCollector.HiveMQEmbeddedExtensionWrapper::wrap)
                         .sorted(Comparator.comparing(EmbeddedExtension::getStartPriority).reversed())

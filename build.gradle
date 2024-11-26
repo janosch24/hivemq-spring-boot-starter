@@ -1,11 +1,11 @@
 plugins {
 	id 'java-library'
 	id 'maven-publish'
-	alias libs.plugins.org.springframework.boot apply false
+	alias libs.plugins.org.springframework.boot //apply false
 	alias libs.plugins.io.spring.dependency.management
 }
 
-version = libs.versions.hivemq.getVersion().get()
+version = findProperty('starter-version') ?: '0.0.0-SNAPSHOT'
 group = 'com.example.hivemq.boot'
 
 java {
@@ -48,7 +48,18 @@ dependencies {
 
 tasks.named("jar") {
 	manifest {
-		attributes 'HiveMQ-Version': "${project.version}"
+		attributes 'HiveMQ-Version': libs.versions.hivemq.getVersion().get()
+	}
+}
+
+springBoot {
+	buildInfo {
+		properties {
+			additional = [
+					'hivemq-ce': libs.versions.hivemq.getVersion().get(),
+					'spring-boot': libs.versions.spring.boot.getVersion().get()
+			]
+		}
 	}
 }
 
@@ -62,6 +73,7 @@ publishing {
 			from components.java
 		}
 	}
+
 	repositories {
 		mavenLocal()
 	}

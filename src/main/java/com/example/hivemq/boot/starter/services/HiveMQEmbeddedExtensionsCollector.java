@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.info.BuildProperties;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +40,11 @@ public class HiveMQEmbeddedExtensionsCollector implements ExtensionMain {
             new ObjectMapper();
 
     @JsonIgnore
+    BuildProperties buildProperties;
+
+    @JsonIgnore
     HiveMQEmbeddedProperties.Extensions.PublishInfo publishInfo;
+
     List<HiveMQEmbeddedExtensionWrapper> extensions;
 
     @Override
@@ -100,15 +105,15 @@ public class HiveMQEmbeddedExtensionsCollector implements ExtensionMain {
     }
 
     public @NotNull String getId() {
-        return "springboot-hivemq-embedded-extensions-collector";
+        return "spring-boot-hivemq-embedded-extensions-collector";
     }
 
     public @NotNull String getName() {
-        return "Springboot-EmbeddedHiveMQ Extensions Collector";
+        return "Springboot EmbeddedHiveMQ-Extensions Collector";
     }
 
     public @NotNull String getVersion() {
-        return "development";
+        return this.buildProperties.getVersion();
     }
 
     public @Nullable String getAuthor() {
