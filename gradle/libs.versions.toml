@@ -6,6 +6,9 @@
 # Build plugins
 spring-boot-version = "3.4.0"
 spring-dependency-management-version = "1.1.6"
+licence-version = "0.16.1"
+versions-version = "0.51.0"
+versions-update-version = "0.8.5"
 
 # Libraries
 hivemq-version = "2024.7"
@@ -15,6 +18,9 @@ hivemq-version = "2024.7"
 # Build-plugins
 org-springframework-boot = { id = "org.springframework.boot", version.ref = "spring-boot-version" }
 io-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management-version" }
+licence = { id = "com.github.hierynomus.license", version.ref = "licence-version" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions-version" }
+versions-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versions-update-version" }
 
 
 [libraries]
@@ -28,9 +34,6 @@ org-springframework-boot-autoconfigure-processor = { module = "org.springframewo
 # Implementations required by our starter ...
 com-hivemq-community-edition-embedded = { module = "com.hivemq:hivemq-community-edition-embedded", version.ref = "hivemq-version" }
 com-fasterxml-jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml" }
-#com-fasterxml-jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson-dataformat-version" }
-#javax-xml-bind-jaxb-api = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version.ref = "jaxb-api-version" }
-#javax-xml-bind-jaxb-runtime = { module = "com.sun.xml.bind:jaxb-impl", version.ref = "jaxb-runtime-version" }
 
 # Lombok to reduce boildeplate code
 lombok = { module = "org.projectlombok:lombok" }
@@ -41,5 +44,4 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 
 [bundles]
 # Some bundles for convenience ...
-#jaxb-legacy = ["javax-xml-bind-jaxb-api", "javax-xml-bind-jaxb-runtime"]
 annotation-processors = ["lombok", "org-springframework-boot-configuration-processor", "org-springframework-boot-autoconfigure-processor"]

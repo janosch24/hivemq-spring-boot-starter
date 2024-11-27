@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-present Jan Haenel
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.example.hivemq.boot.starter.services;
 
 import com.example.hivemq.boot.starter.config.HiveMQEmbeddedProperties;
@@ -19,6 +34,10 @@ import java.nio.file.Path;
 public final class HiveMQEmbeddedService {
 
     private final EmbeddedHiveMQ embeddedHiveMQ;
+    private final boolean autoStart;
+
+    @Getter
+    private volatile boolean running = false;
 
     public HiveMQEmbeddedService(HiveMQEmbeddedProperties properties) {
 
@@ -31,10 +50,12 @@ public final class HiveMQEmbeddedService {
                         .withExtensionsFolder(Path.of(properties.getExtensions().getFolder()).toAbsolutePath())
                         .withoutLoggingBootstrap()
                         .build();
+
+        this.autoStart = properties.isAutoStart();
     }
 
     public HiveMQEmbeddedService(HiveMQEmbeddedProperties properties,
-                          HiveMQEmbeddedExtensionsCollector extensionsCollector) {
+                                 HiveMQEmbeddedExtensionsCollector extensionsCollector) {
 
         prepareEnvironment(properties);
 
@@ -55,6 +76,8 @@ public final class HiveMQEmbeddedService {
                                         .build())
                         .withoutLoggingBootstrap()
                         .build();
+
+        this.autoStart = properties.isAutoStart();
     }
 
     @SneakyThrows({ IOException.class })
@@ -85,12 +108,21 @@ public final class HiveMQEmbeddedService {
     }
 
     @PostConstruct
+    private void internalStartup() {
+        if (this.autoStart)
+            startup();
+    }
+
+    @Synchronized
     public void startup() {
         this.embeddedHiveMQ.start().join();
+        this.running = true;
     }
 
     @PreDestroy
+    @Synchronized
     public void shutdown() {
         this.embeddedHiveMQ.stop().join();
+        this.running = false;
     }
 }
