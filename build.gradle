@@ -9,7 +9,7 @@ plugins {
 	alias libs.plugins.versions.update
 }
 
-version = findProperty('starter-version') ?: '0.0.0-SNAPSHOT'
+version = libs.versions.hivemq.version.get()
 group = 'com.example.hivemq.boot'
 
 java {
@@ -51,7 +51,7 @@ dependencies {
 
 tasks.named("jar") {
 	manifest {
-		attributes 'HiveMQ-Version': libs.versions.hivemq.getVersion().get()
+		attributes 'HiveMQ-Version': version
 	}
 	archiveClassifier = ''
 }
@@ -60,8 +60,8 @@ springBoot {
 	buildInfo {
 		properties {
 			additional = [
-					'hivemq-ce': libs.versions.hivemq.getVersion().get(),
-					'spring-boot': libs.versions.spring.boot.getVersion().get()
+					'hivemq-ce': version,
+					'spring-boot': libs.versions.spring.boot.version.get()
 			]
 		}
 	}
