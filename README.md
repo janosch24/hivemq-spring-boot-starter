@@ -16,7 +16,7 @@ This starter is only demo and not (yet) published to _Maven central_.
 In order to use it, you have to clone this repository and build it from scratch.
 To do so, _cd_ into the project's root and call:
 
-~~~gradle
+~~~cmd
 gradlew publish
 ~~~
 
@@ -50,9 +50,9 @@ so _HiveMQ_ can find its version on startup and make an appropriate log entry.
 
 ~~~build.gradle
 tasks.named("bootJar") {
-	manifest {
-		attributes 'HiveMQ-Version': '2024.7'
-	}
+    manifest {
+	    attributes 'HiveMQ-Version': '2024.7'
+    }
 }
 ~~~
 
@@ -211,7 +211,7 @@ hivemq:
 
 ## Logging
 _HiveMQ_ is shipped with a _logback.xml_ for logging. _Spring Boot_ detects and uses it unless you define your own 
-_logback.xml_. If so, in turn you cannot use _HiveMQ_s _logback.xml_, as it is not ready to be included in your own 
+_logback.xml_. If so, in turn you cannot use _HiveMQs_ _logback.xml_, as it is not ready to be included in your own 
 logging configuration. Further, if your application already uses a _Spring_ flavoured _logback-spring.xml_ configuration, 
 it will be ignored, as the one from _HiveMQ_ takes precedence.
 Therefore, this starter is equipped with a _logback_ configuration, which you can include in your own _logback_ configuration.
@@ -228,7 +228,7 @@ You can use it from your _logback-spring.xml_ as shown in the following example:
 
 </configuration>
 ~~~
-> ** NOTE:** If you define a _DEFAULT_PATTERN_, _HiveMQ_ logging will follow this, uses its predefined pattern otherwise.
+> **NOTE:** If you define a _DEFAULT_PATTERN_, _HiveMQ_ logging will follow this, uses its predefined pattern otherwise.
 
 In order to avoid clashes between your own _logback-spring.xml_ and _HiveMQ_s internal configuration it is recommended to
 force _Spring Boot_ to use your version of the file _logback-spring.xml_:
