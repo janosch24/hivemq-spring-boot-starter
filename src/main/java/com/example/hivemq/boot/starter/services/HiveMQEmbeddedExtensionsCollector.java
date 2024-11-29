@@ -46,6 +46,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Collects wrapped embedded extensions.
+ * As this class implements the required extension methods itself,
+ * it can act as a single embedded extension and delegate calls to
+ * start and stop from hivemq to all collected embedded extensions.
+ */
 @Value
 @Slf4j
 @JsonPropertyOrder({ "id", "name", "version", "author", "startPriority", "priority" })
@@ -80,7 +86,7 @@ public class HiveMQEmbeddedExtensionsCollector implements ExtensionMain {
         });
 
         // Additional publish info if required ...
-        if (this.publishInfo.isEnabled()) {
+        if (this.publishInfo.isPublish()) {
             publishInfo();
         }
     }
@@ -120,23 +126,38 @@ public class HiveMQEmbeddedExtensionsCollector implements ExtensionMain {
                 }, 1, TimeUnit.SECONDS);
     }
 
+    /**
+     * @return The extension id
+     */
     public @NotNull String getId() {
         return "spring-boot-hivemq-embedded-extensions-collector";
     }
 
+    /**
+     * @return The extension name
+     */
     public @NotNull String getName() {
         return "Springboot EmbeddedHiveMQ-Extensions Collector";
     }
 
+    /**
+     * @return The extension version
+     */
     public @NotNull String getVersion() {
         return Optional.ofNullable(this.buildProperties.getVersion())
                 .orElse("development");
     }
 
+    /**
+     * @return The extension author
+     */
     public @Nullable String getAuthor() {
         return null;
     }
 
+    /**
+     * @return The extension priority, this is the maximum priority of all collected extensions
+     */
     public int getPriority() {
         return this.extensions.stream()
                 .map(EmbeddedExtension::getPriority)
@@ -144,6 +165,9 @@ public class HiveMQEmbeddedExtensionsCollector implements ExtensionMain {
                 .orElse(0);
     }
 
+    /**
+     * @return The extension start priority, this is the maximum start priority of all collected extensions
+     */
     public int getStartPriority() {
         return this.extensions.stream()
                 .map(EmbeddedExtension::getStartPriority)
@@ -160,6 +184,9 @@ public class HiveMQEmbeddedExtensionsCollector implements ExtensionMain {
         loaded, started, failed
     }
 
+    /**
+     * Wrapper class for all HiveMQ extensions
+     */
     @Data
     @RequiredArgsConstructor(staticName = "wrap")
     @JsonPropertyOrder({ "status", "id", "name", "version", "author", "startPriority", "priority" })

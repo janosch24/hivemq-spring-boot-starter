@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Encapsulates HiveMQ-CE embedded broker
+ */
 @Slf4j
 public final class HiveMQEmbeddedService {
 
@@ -39,7 +42,11 @@ public final class HiveMQEmbeddedService {
     @Getter
     private volatile boolean running = false;
 
-    public HiveMQEmbeddedService(HiveMQEmbeddedProperties properties) {
+    /**
+     * Creates an embedded mqtt-broker without embedded extensions
+     * @param properties Configuration properties
+     */
+    public HiveMQEmbeddedService(final HiveMQEmbeddedProperties properties) {
 
         prepareEnvironment(properties);
 
@@ -54,8 +61,13 @@ public final class HiveMQEmbeddedService {
         this.autoStart = properties.isAutoStart();
     }
 
-    public HiveMQEmbeddedService(HiveMQEmbeddedProperties properties,
-                                 HiveMQEmbeddedExtensionsCollector extensionsCollector) {
+    /**
+     * Creates an embedded mqtt-broker with embedded extensions
+     * @param properties Configuration properties
+     * @param extensionsCollector Collection of embedded extensions
+     */
+    public HiveMQEmbeddedService(final HiveMQEmbeddedProperties properties,
+                                 final HiveMQEmbeddedExtensionsCollector extensionsCollector) {
 
         prepareEnvironment(properties);
 
@@ -113,16 +125,30 @@ public final class HiveMQEmbeddedService {
             startup();
     }
 
+    /**
+     * Starts the embedded mqtt-broker
+     */
     @Synchronized
     public void startup() {
-        this.embeddedHiveMQ.start().join();
-        this.running = true;
+        try{
+            this.embeddedHiveMQ.start().join();
+            this.running = true;
+        } catch (RuntimeException rte) {
+            log.error("Failed to start HiveMQ.", rte.getCause());
+        }
     }
 
+    /**
+     * Stops the embedded mqtt-broker
+     */
     @PreDestroy
     @Synchronized
     public void shutdown() {
-        this.embeddedHiveMQ.stop().join();
-        this.running = false;
+        try {
+            this.embeddedHiveMQ.stop().join();
+            this.running = false;
+        } catch (RuntimeException rte) {
+            log.error("Failed to shutdown HiveMQ.", rte.getCause());
+        }
     }
 }

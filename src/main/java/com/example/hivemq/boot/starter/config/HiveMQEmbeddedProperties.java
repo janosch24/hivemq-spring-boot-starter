@@ -15,10 +15,7 @@
  */
 package com.example.hivemq.boot.starter.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import jakarta.validation.constraints.Max;
@@ -28,9 +25,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @Validated
@@ -40,6 +39,7 @@ public class HiveMQEmbeddedProperties {
     private static final String defaultConfigFolder = ".hivemq/conf";
     private static final String defaultDataFolder = ".hivemq/data";
     private static final String defaultExtensionsFolder = ".hivemq/extensions";
+    private static final String defaultInfoTopic = "boot/extensions";
 
     /**
      * Whether to enable HiveMQ
@@ -67,8 +67,11 @@ public class HiveMQEmbeddedProperties {
      * HiveMQ configuration
      */
     @NotNull
-    private HiveMQ config =
-            new HiveMQ(Listeners.defaults(), null, null, null);
+    private Config config =
+            new Config(defaultConfigFolder,
+                    new Listeners(List.of(new TcpListener(null, "0.0.0.0", 1883)),
+                    null, null, null),
+                    null, null, null);
 
     @Value
     @Validated
@@ -79,6 +82,11 @@ public class HiveMQEmbeddedProperties {
          */
         @NotBlank
         String folder;
+
+        @ConstructorBinding
+        public Folder(String folder) {
+            this.folder = folder;
+        }
     }
 
     @Data
@@ -95,6 +103,13 @@ public class HiveMQEmbeddedProperties {
          * HiveMQ collector for Spring Boot managed embedded extensions
          */
         private Collector collector = new Collector();
+
+        public String getFolder() {
+            return Optional.of(this.folder.strip())
+                    .filter(f -> !f.isEmpty())
+                    .orElse(defaultExtensionsFolder);
+        }
+
         @Data
         @Validated
         public static class Collector {
@@ -107,8 +122,7 @@ public class HiveMQEmbeddedProperties {
             /**
              * Publish info for Spring Boot managed embedded extensions
              */
-            private PublishInfo publishInfo = new PublishInfo();
-
+            private PublishInfo info = new PublishInfo();
         }
 
         @Data
@@ -118,13 +132,19 @@ public class HiveMQEmbeddedProperties {
             /**
              * Whether to publish info
              */
-            private boolean enabled = true;
+            private boolean publish = true;
 
             /**
              * Topic to publish info to
              */
             @NotBlank
-            private String topic = "boot/extensions";
+            private String topic = defaultInfoTopic;
+
+            public String getTopic() {
+                return Optional.of(this.topic.strip())
+                        .filter(f -> !f.isEmpty())
+                        .orElse(defaultInfoTopic);
+            }
         }
     }
 
@@ -132,7 +152,7 @@ public class HiveMQEmbeddedProperties {
     @Validated
     @JsonRootName(value = "hivemq")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    public static class HiveMQ {
+    public static class Config {
 
         @JacksonXmlProperty(isAttribute = true, localName = "xmlns:xsi")
         private final String nameSpace = "http://www.w3.org/2001/XMLSchema-instance";
@@ -144,7 +164,7 @@ public class HiveMQEmbeddedProperties {
          */
         @NotBlank
         @JsonIgnore
-        private String folder = ".hivemq/conf";
+        private final String folder;
 
         /**
          * HiveMQ listener configuration
@@ -166,12 +186,35 @@ public class HiveMQEmbeddedProperties {
          * HiveMQ persistence configuration
          */
         private final Persistence persistence;
+
+        @ConstructorBinding
+        public Config(final String folder, final Listeners listeners, final Mqtt mqtt, final Security security, final Persistence persistence) {
+            this.folder = folder;
+            this.listeners = listeners;
+            this.mqtt = mqtt;
+            this.security = security;
+            this.persistence = persistence;
+        }
+
+        public String getFolder() {
+            return Optional.of(this.folder.strip())
+                    .filter(f -> !f.isEmpty())
+                    .orElse(defaultConfigFolder);
+        }
     }
 
     @Value
     @Validated
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class Listeners {
+
+        @ConstructorBinding
+        public Listeners(final List<TcpListener> tcpListeners, final List<SecureTcpListener> tlsTcpListeners, final List<WebsocketListener> websocketListeners, final List<SecureWebsocketListener> tlsWebsocketListeners) {
+            this.tcpListeners = tcpListeners;
+            this.tlsTcpListeners = tlsTcpListeners;
+            this.websocketListeners = websocketListeners;
+            this.tlsWebsocketListeners = tlsWebsocketListeners;
+        }
 
         /**
          * List of HiveMQ tcp listeners
@@ -185,7 +228,7 @@ public class HiveMQEmbeddedProperties {
          */
         @JsonProperty("tls-tcp-listener")
         @JacksonXmlElementWrapper(useWrapping = false)
-        List<SecureTcpListener> secureTcpListeners;
+        List<SecureTcpListener> tlsTcpListeners;
 
         /**
          * List of HiveMQ websocket listeners
@@ -199,16 +242,13 @@ public class HiveMQEmbeddedProperties {
          */
         @JsonProperty("tls-websocket-listener")
         @JacksonXmlElementWrapper(useWrapping = false)
-        List<SecureWebsocketListener> secureWebsocketListeners;
-
-        public static Listeners defaults() {
-            return new Listeners(List.of(TcpListener.defaultListener("0.0.0.0", 1883)),
-                    null, null, null);
-        }
+        List<SecureWebsocketListener> tlsWebsocketListeners;
     }
 
     @Value
     @Validated
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonPropertyOrder({ "name", "port", "bindAddress" })
     public static class TcpListener {
 
         /**
@@ -229,14 +269,12 @@ public class HiveMQEmbeddedProperties {
         @Min(1025)
         @Max(65535)
         Integer port;
-
-        public static TcpListener defaultListener(@NotBlank String bindAddress, int port) {
-            return new TcpListener(null, bindAddress, port);
-        }
     }
 
     @Value
     @Validated
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonPropertyOrder({ "name", "port", "bindAddress" })
     public static class SecureTcpListener {
 
         /**
@@ -267,6 +305,8 @@ public class HiveMQEmbeddedProperties {
 
     @Value
     @Validated
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonPropertyOrder({ "name", "port", "bindAddress", "path", "allowExtensions", "subprotocols" })
     public static class WebsocketListener {
 
         /**
@@ -310,6 +350,8 @@ public class HiveMQEmbeddedProperties {
 
     @Value
     @Validated
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonPropertyOrder({ "name", "port", "bindAddress", "path", "allowExtensions", "subprotocols" })
     public static class SecureWebsocketListener {
 
         /**
@@ -616,20 +658,22 @@ public class HiveMQEmbeddedProperties {
 
     @Value
     @Validated
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class TLS {
 
         /**
-         * TLS protocol to use
+         * TLS protocols to use
          */
+        @JsonProperty("protocol")
         @JacksonXmlElementWrapper(localName = "protocols")
-        List<String> protocol;
+        List<String> protocols;
 
         /**
          * Comma-separated list of cipher suites to use
          */
-        @JacksonXmlElementWrapper(localName = "cipher-suites")
         @JsonProperty("cipher-suite")
-        List<String> cipherSuite;
+        @JacksonXmlElementWrapper(localName = "cipher-suites")
+        List<String> cipherSuites;
 
         /**
          * Client authentication mode to be used
@@ -668,6 +712,7 @@ public class HiveMQEmbeddedProperties {
 
         @Value
         @Validated
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
         public static class KeyStore {
 
             /**
@@ -691,6 +736,7 @@ public class HiveMQEmbeddedProperties {
 
         @Value
         @Validated
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
         public static class TrustStore {
 
             /**

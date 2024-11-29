@@ -50,7 +50,7 @@ public class HiveMQEmbeddedAutoConfiguration {
     @ConditionalOnProperty(value = "hivemq.extensions.collector.enabled", havingValue = "true", matchIfMissing = true)
     public HiveMQEmbeddedExtensionsCollector hiveMQEmbeddedExtensionsCollector(BuildProperties buildProperties) {
         return new HiveMQEmbeddedExtensionsCollector(buildProperties,
-                this.properties.getExtensions().getCollector().getPublishInfo(),
+                this.properties.getExtensions().getCollector().getInfo(),
                 this.extensions.stream()
                         .map(HiveMQEmbeddedExtensionsCollector.HiveMQEmbeddedExtensionWrapper::wrap)
                         .sorted(Comparator.comparing(EmbeddedExtension::getStartPriority).reversed())
