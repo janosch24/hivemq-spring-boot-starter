@@ -80,7 +80,7 @@ glassfish-jaxb.version = 2.3.9
 ### Configuration
 This starter in conjunction with _HiveMQ_ comes with sensible default values.
 There is no configuration required at all, in order to have default behavior incorporated into
-a _Spring Boot_ application. Nevertheless, all configuration parameters, required by _HiveMQ_, can be customized. +
+a _Spring Boot_ application. Nevertheless, all configuration parameters, required by _HiveMQ_, can be customized.  
 For a general understanding: This starter consumes _Spring Boot_ style configurations (either properties or yaml)
 and streamlines a standard _HiveMQ_ XML-based configuration file upon startup, so _HiveMQ_ can find it.
 
@@ -210,7 +210,7 @@ hivemq:
 ~~~
 
 > **NOTE:** Given values for _HiveMQ_ related configurations are just examples, for available value ranges and
-default values consult the [Community Edition Wiki_](https://github.com/hivemq/hivemq-community-edition/wiki[_HiveMQ)
+default values consult the [_HiveMQ Community Edition_ Wiki](https://github.com/hivemq/hivemq-community-edition/wiki)
 
 ## Logging
 _HiveMQ_ is shipped with a _logback.xml_ for logging. _Spring Boot_ detects and uses it unless you define your own
@@ -234,7 +234,7 @@ You can use it from your _logback-spring.xml_ as shown in the following example:
 
 > **NOTE:** If you define a _DEFAULT_PATTERN_, _HiveMQ_ logging will follow this, uses its predefined pattern otherwise.
 
-In order to avoid clashes between your own _logback-spring.xml_ and _HiveMQ_s internal configuration it is recommended to
+In order to avoid clashes between your own _logback-spring.xml_ and _HiveMQs_ internal configuration, it is recommended to
 force _Spring Boot_ to use your version of the file _logback-spring.xml_:
 
 ~~~yml
@@ -245,9 +245,9 @@ logging:
 ## Embedded Extensions
 Using this starter you can use embedded extensions, as described in [_HiveMQ Community Edition_ Quickstart guide](https://github.com/hivemq/hivemq-community-edition).
 As embedded _HiveMQ_ supports only a single embedded extension, this starter provides a convenience wrapper which collects
-all available embedded extensions of type _com.hivemq.embedded.EmbeddedExtension_ into a single extension. +
+all available embedded extensions of type _com.hivemq.embedded.EmbeddedExtension_ into a single extension.  
 Note, that both, _priority_ and _start priority_ of that single wrapper-extension, will be the maximum values of all
-collected extensions. Nevertheless, all collected embedded extensions are sorted by _start priority_ (highest comes first). +
+collected extensions. Nevertheless, all collected embedded extensions are sorted by _start priority_ (highest comes first).  
 In order to use your own embedded extension, you simply have to create a bean either way _Spring Boot_ recommends it.
 
 ~~~java
