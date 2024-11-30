@@ -34,7 +34,7 @@ import java.nio.file.Path;
  * Encapsulates HiveMQ-CE embedded broker
  */
 @Slf4j
-public final class HiveMQEmbeddedService {
+public final class HiveMQEmbeddedService implements HiveMQEmbeddedStarter {
 
     private final EmbeddedHiveMQ embeddedHiveMQ;
     private final boolean autoStart;
@@ -129,6 +129,7 @@ public final class HiveMQEmbeddedService {
      * Starts the embedded mqtt-broker
      */
     @Synchronized
+    @Override
     public void startup() {
         try{
             this.embeddedHiveMQ.start().join();
@@ -143,6 +144,7 @@ public final class HiveMQEmbeddedService {
      */
     @PreDestroy
     @Synchronized
+    @Override
     public void shutdown() {
         try {
             this.embeddedHiveMQ.stop().join();
