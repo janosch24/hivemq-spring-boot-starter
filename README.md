@@ -15,7 +15,7 @@ A starter to incorporate _HiveMQ-CE_ into _Spring Boot_.
 ## Building
 This starter is only demo and not (yet) published to _Maven central_.
 In order to use it, you have to clone this repository and build it from scratch.
-To do so, _cd_ into the project's root and call:
+To do so, use following commands:
 
 ~~~cmd
 git clone https://github.com/janosch24/hivemq-spring-boot-starter
@@ -53,7 +53,7 @@ so _HiveMQ_ can find its version on startup and make an appropriate log entry.
 ~~~groovy
 tasks.named("bootJar") {
     manifest {
-	    attributes 'HiveMQ-Version': '2024.7'
+        attributes 'HiveMQ-Version': '2024.7'
     }
 }
 ~~~
