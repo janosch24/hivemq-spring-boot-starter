@@ -1,109 +1,109 @@
 plugins {
-	id 'java-library'
-	id 'maven-publish'
-	alias libs.plugins.org.springframework.boot
-	alias libs.plugins.io.spring.dependency.management
+    id 'java-library'
+    id 'maven-publish'
+    alias libs.plugins.org.springframework.boot
+    alias libs.plugins.io.spring.dependency.management
 
-	alias libs.plugins.licence
-	alias libs.plugins.versions
-	alias libs.plugins.versions.update
+    alias libs.plugins.licence
+    alias libs.plugins.versions
+    alias libs.plugins.versions.update
 }
 
 version = libs.versions.hivemq.version.get()
 group = 'com.example.hivemq.boot'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 
-	withSourcesJar()
+    withSourcesJar()
 }
 
 dependencyManagement {
-	imports {
-		mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-	}
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 dependencies {
-	implementation libs.org.springframework.boot.starter
-	implementation libs.org.springframework.boot.starter.validation
-	implementation libs.com.fasterxml.jackson.dataformat.xml
+    implementation libs.org.springframework.boot.starter
+    implementation libs.org.springframework.boot.starter.validation
+    implementation libs.com.fasterxml.jackson.dataformat.xml
 
-	api libs.com.hivemq.community.edition.embedded
+    api libs.com.hivemq.community.edition.embedded
 
-	annotationProcessor libs.bundles.annotation.processors
+    annotationProcessor libs.bundles.annotation.processors
 
-	testImplementation libs.org.springframework.boot.starter.test
-	testRuntimeOnly libs.junit.platform.launcher
+    testImplementation libs.org.springframework.boot.starter.test
+    testRuntimeOnly libs.junit.platform.launcher
 }
 
 tasks.named("jar") {
-	manifest {
-		attributes 'HiveMQ-Version': version
-	}
-	archiveClassifier = ''
+    manifest {
+        attributes 'HiveMQ-Version': version
+    }
+    archiveClassifier = ''
 }
 
 springBoot {
-	buildInfo {
-		properties {
-			additional = [
-					'hivemq-ce': version,
-					'spring-boot': libs.versions.spring.boot.version.get()
-			]
-		}
-	}
+    buildInfo {
+        properties {
+            additional = [
+                    'hivemq-ce': version,
+                    'spring-boot': libs.versions.spring.boot.version.get()
+            ]
+        }
+    }
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 publishing {
-	publications {
-		starter(MavenPublication) {
-			from components.java
-		}
-	}
+    publications {
+        starter(MavenPublication) {
+            from components.java
+        }
+    }
 
-	repositories {
-		mavenLocal()
-	}
+    repositories {
+        mavenLocal()
+    }
 }
 
 license {
-	header = file("HEADER")
-	mapping("java", "SLASHSTAR_STYLE")
+    header = file("HEADER")
+    mapping("java", "SLASHSTAR_STYLE")
 }
 
 downloadLicenses {
-	dependencyConfiguration = "runtimeClasspath"
+    dependencyConfiguration = "runtimeClasspath"
 }
 
 // We disable this tasks for safety as we do not have a Spring Boot app,
 // but we need to apply the Spring Boot plugin in order to have
 // build info.
 tasks.named("bootRun") {
-	enabled = false
+    enabled = false
 }
 tasks.named("bootJar") {
-	enabled = false
+    enabled = false
 }
 tasks.named("bootBuildImage") {
-	enabled = false
+    enabled = false
 }
 tasks.named("resolveMainClassName") {
-	enabled = false
+    enabled = false
 }
