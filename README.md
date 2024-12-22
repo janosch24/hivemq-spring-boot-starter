@@ -32,7 +32,7 @@ You just have to customize your build script and (if required) your application 
 Upon the usual _Spring Boot_ starter, you have to use following dependency in your _build.gradle_ script
 in order to embed _HiveMQ_ into your _Spring Boot_ application:
 
-~~~grovy
+~~~groovy
 dependencies {
     implementation 'com.example.hivemq.boot:hivemq-spring-boot-starter:2024.9'
 }
@@ -76,6 +76,8 @@ jakarta-activation.version = 1.2.2
 jakarta-xml-bind.version = 2.3.3
 glassfish-jaxb.version = 2.3.9
 ~~~
+
+> **NOTE:** For a ready to go example, see [_hivemq-spring-boot-demo_](https://github.com/janosch24/hivemq-spring-boot-demo)
 
 ### Configuration
 This starter in conjunction with _HiveMQ_ comes with sensible default values.
@@ -218,7 +220,7 @@ _logback.xml_. If so, in turn you cannot use _HiveMQs_ _logback.xml_, as it is n
 logging configuration. Further, if your application already uses a _Spring_ flavoured _logback-spring.xml_ configuration,
 it will be ignored, as the one from _HiveMQ_ takes precedence.
 Therefore, this starter is equipped with a _logback_ configuration, which you can include in your own _logback_ configuration.
-It is mainly derived from _HiveMQ_s original _logback.xml_, but adds some _Spring Boot_ specific stuff.
+It is mainly derived from _HiveMQs_ original _logback.xml_, but adds some _Spring Boot_ specific stuff.
 You can use it from your _logback-spring.xml_ as shown in the following example:
 
 ~~~xml
