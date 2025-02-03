@@ -11,7 +11,7 @@ versions-version = "0.52.0"
 versions-update-version = "0.8.5"
 
 # Libraries
-hivemq-version = "2024.9"
+hivemq-version = "2025.1"
 
 
 [plugins]
