@@ -1,5 +1,5 @@
 # hivemq-spring-boot-starter
-A starter to incorporate _HiveMQ-CE_ into _Spring Boot_.
+A starter to incorporate _HiveMQ-CE_ into _Spring Boot 3_.
 
 <!-- TOC -->
 * [hivemq-spring-boot-starter](#hivemq-spring-boot-starter)
@@ -34,7 +34,7 @@ in order to embed _HiveMQ_ into your _Spring Boot_ application:
 
 ~~~groovy
 dependencies {
-    implementation 'com.example.hivemq.boot:hivemq-spring-boot-starter:2024.9'
+    implementation 'com.example.hivemq.boot:hivemq-spring-boot-starter:2025.1'
 }
 ~~~
 
@@ -53,7 +53,7 @@ so _HiveMQ_ can find its version on startup and make an appropriate log entry.
 ~~~groovy
 tasks.named("bootJar") {
     manifest {
-        attributes 'HiveMQ-Version': '2024.9'
+        attributes 'HiveMQ-Version': '2025.1'
     }
 }
 ~~~
