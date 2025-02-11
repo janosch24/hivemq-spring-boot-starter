@@ -82,7 +82,7 @@ glassfish-jaxb.version = 2.3.9
 ### Configuration
 This starter in conjunction with _HiveMQ_ comes with sensible default values.
 There is no configuration required at all, in order to have default behavior incorporated into
-a _Spring Boot_ application. Nevertheless, all configuration parameters, required by _HiveMQ_, can be customized.  
+a _Spring Boot_ application. Nevertheless, all configuration parameters, required by _HiveMQ_, can get customized.  
 For a general understanding: This starter consumes _Spring Boot_ style configurations (either properties or yaml)
 and streamlines a standard _HiveMQ_ XML-based configuration file upon startup, so _HiveMQ_ can find it.
 
@@ -153,11 +153,11 @@ hivemq:
             concurrentHandshakeLimit: -1
             native-ssl: false
             keystore:
-              path: path-to-keystore
+              path: path/to/keystore
               password: my-secret-password
               private-key-password: my-super-secret-password
             truststore:
-              path: path-to-truststore
+              path: path/to/truststore
               password: my-secret-password
 
       tls-websocket-listeners:
@@ -177,11 +177,11 @@ hivemq:
             concurrentHandshakeLimit: -1
             native-ssl: false
             keystore:
-              path: path-to-keystore
+              path: path/to/keystore
               password: my-secret-password
               private-key-password: my-super-secret-password
             truststore:
-              path: path-to-truststore
+              path: path/to/truststore
               password: my-secret-password
 
     mqtt:
