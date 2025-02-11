@@ -35,7 +35,7 @@ org-springframework-boot-autoconfigure-processor = { module = "org.springframewo
 com-hivemq-community-edition-embedded = { module = "com.hivemq:hivemq-community-edition-embedded", version.ref = "hivemq-version" }
 com-fasterxml-jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml" }
 
-# Lombok to reduce boildeplate code
+# Lombok to reduce boilerplate code
 lombok = { module = "org.projectlombok:lombok" }
 
 # Testing ...
