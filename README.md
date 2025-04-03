@@ -34,7 +34,7 @@ in order to embed _HiveMQ_ into your _Spring Boot_ application:
 
 ~~~groovy
 dependencies {
-    implementation 'com.example.hivemq.boot:hivemq-spring-boot-starter:2025.1'
+    implementation 'com.example.hivemq.boot:hivemq-spring-boot-starter:2025.2'
 }
 ~~~
 
@@ -53,7 +53,7 @@ so _HiveMQ_ can find its version on startup and make an appropriate log entry.
 ~~~groovy
 tasks.named("bootJar") {
     manifest {
-        attributes 'HiveMQ-Version': '2025.1'
+        attributes 'HiveMQ-Version': '2025.2'
     }
 }
 ~~~
@@ -65,7 +65,7 @@ You can do this by employing the _Spring Boot_ dependency management plugin in y
 
 ~~~groovy
 plugins {
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'io.spring.dependency-management' version '1.1.7'
 } 
 ~~~
 
