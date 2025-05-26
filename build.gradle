@@ -1,8 +1,9 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 plugins {
     id 'java-library'
     id 'maven-publish'
     alias libs.plugins.org.springframework.boot
-    alias libs.plugins.io.spring.dependency.management
 
     alias libs.plugins.licence
     alias libs.plugins.versions
@@ -20,12 +21,6 @@ java {
     withSourcesJar()
 }
 
-dependencyManagement {
-    imports {
-        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
-    }
-}
-
 repositories {
     mavenCentral()
 }
@@ -37,12 +32,14 @@ configurations {
 }
 
 dependencies {
+    implementation platform(SpringBootPlugin.BOM_COORDINATES)
     implementation libs.org.springframework.boot.starter
     implementation libs.org.springframework.boot.starter.validation
     implementation libs.com.fasterxml.jackson.dataformat.xml
 
     api libs.com.hivemq.community.edition.embedded
 
+    annotationProcessor platform(SpringBootPlugin.BOM_COORDINATES)
     annotationProcessor libs.bundles.annotation.processors
 
     testImplementation libs.org.springframework.boot.starter.test

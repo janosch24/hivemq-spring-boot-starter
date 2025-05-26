@@ -4,8 +4,7 @@
 
 [versions]
 # Build plugins
-spring-boot-version = "3.4.5"
-spring-dependency-management-version = "1.1.7"
+spring-boot-version = "3.5.0"
 licence-version = "0.16.1"
 versions-version = "0.52.0"
 versions-update-version = "1.0.0"
@@ -17,7 +16,6 @@ hivemq-version = "2025.3"
 [plugins]
 # Build-plugins
 org-springframework-boot = { id = "org.springframework.boot", version.ref = "spring-boot-version" }
-io-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management-version" }
 licence = { id = "com.github.hierynomus.license", version.ref = "licence-version" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions-version" }
 versions-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versions-update-version" }
