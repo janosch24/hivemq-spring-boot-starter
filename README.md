@@ -34,7 +34,7 @@ Upon the usual _Spring Boot_ starter, you have to use the following dependency i
 
 ~~~groovy
 dependencies {
-    implementation 'com.example.hivemq.boot:hivemq-spring-boot-starter:2025.3'
+    implementation 'com.example.hivemq.boot:hivemq-spring-boot-starter:2025.4'
 }
 ~~~
 
@@ -53,7 +53,7 @@ so _HiveMQ_ can find its version on startup and make an appropriate log entry.
 ~~~groovy
 tasks.named("bootJar") {
     manifest {
-        attributes 'HiveMQ-Version': '2025.3'
+        attributes 'HiveMQ-Version': '2025.4'
     }
 }
 ~~~
