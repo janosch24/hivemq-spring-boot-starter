@@ -7,7 +7,7 @@
 spring-boot-version = "3.5.6"
 licence-version = "0.16.1"
 versions-version = "0.52.0"
-versions-update-version = "1.0.0"
+versions-update-version = "1.0.1"
 
 # Libraries
 hivemq-version = "2025.4"
