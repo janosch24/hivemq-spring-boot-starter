@@ -4,7 +4,7 @@
 
 [versions]
 # Build plugins
-spring-boot-version = "4.0.0"
+spring-boot-version = "4.0.1"
 licence-version = "0.16.1"
 versions-version = "0.53.0"
 versions-update-version = "1.0.1"
